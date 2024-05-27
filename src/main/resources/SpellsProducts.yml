@@ -1,0 +1,8 @@
+ Product1:
+  ProductName: "Potion of Healing"
+  ProductMaterial: "POTION"
+  ProductPrice: 10
+Product2:
+  ProductName: "Enchanting Book"
+  ProductMaterial: "BOOK"
+  ProductPrice: 20

@@ -1,0 +1,49 @@
+name: MainServerPlugin
+version: 1.0
+main: me.plugin.Main
+api-version: 1.17
+depend: [Citizens]
+commands:
+  BankGui:
+    description: this shows the bank gui
+    usage: "/BankGui"
+    permission: "MainLobbyPlugin.BankGui"
+    permission-message: "You do not have permission to use this command."
+  EnableBanking:
+    description: this enables the banking gui
+    usage: "/EnableBanking"
+    permission: "MainLobbyPlugin.EnableBanking"
+    permission-message: "You do not have permission to use this command."
+  SetCash:
+    description: this sets a players cash
+    usage: "/SetCash"
+    permission: "MainLobbyPlugin.SetCash"
+    permission-message: "You do not have permission to use this command."
+  Lobby:
+    description: sends the player to the main lobby
+  OverWorld:
+    description: sends the player to the overworld
+  OpenWorldShopGUI:
+    description: opens the openworld merchant gui
+    usage: "/OpenWorldShopGUI"
+    permission: "MainLobbyPlugin.OpenWorldShopGUI"
+    permission-message: "You do not have permission to use this command."
+  Friend:
+    description: allows a player to send a friend request to a player
+  FriendAccept:
+    description: allows a player to accept a friend request from a player
+  UpdateCashLeaderboard:
+    description: updates the cash leaderboard
+    usage: "/UpdateCashLeaderboard"
+    permission: "MainLobbyPlugin.UpdateCashLeaderboard"
+    permission-message: "You do not have permission to use this command."
+  UpdateClanLeaderboard:
+    description: updates the clan leaderboard
+    usage: "/UpdateClanLeaderboard"
+    permission: "MainLobbyPlugin.UpdateClanLeaderboard"
+    permission-message: "You do not have permission to use this command."
+  Clan:
+    description: Main command for clan management
+    usage: /<command> <subcommand>
+    permission: "MainLobbyPlugin.Clan"
+    permission-message: "You do not have permission to use this command."
