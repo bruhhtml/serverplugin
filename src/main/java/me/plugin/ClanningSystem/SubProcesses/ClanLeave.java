@@ -70,8 +70,8 @@ public class ClanLeave {
                     player.sendMessage("You have left " + currentClan);
 
                     //UPDATED IN GAME VISUALS
-                    OverheadScoreboard.updateOverhead(player);
-
+//                    OverheadScoreboard.updateOverhead(player);
+                    OverheadScoreboard.removePlayerFromClan(player, currentClan);
                     return true;
                 }
                 if (memberList.size() > 0) {
@@ -96,8 +96,8 @@ public class ClanLeave {
                     player.sendMessage("You have left " + currentClan);
 
                     //UPDATED IN GAME VISUALS
+//                    OverheadScoreboard.removePlayerFromClan(player, currentClan);
                     OverheadScoreboard.removePlayerFromClan(player, currentClan);
-
                     return true;
                 }
                 // ## ELSE ## COMPLETELY DELETE CLAN
@@ -112,7 +112,8 @@ public class ClanLeave {
                 database.save();
 
                 //UPDATED IN GAME VISUALS
-                OverheadScoreboard.updateOverhead(player);
+//                OverheadScoreboard.updateOverhead(player);
+                OverheadScoreboard.removePlayerFromClan(player, currentClan);
                 break;
             case "Admin":
                 // REMOVE ## ADMIN ## FROM LIST

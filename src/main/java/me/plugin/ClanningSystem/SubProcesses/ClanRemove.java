@@ -87,7 +87,8 @@ public class ClanRemove {
                 Player onlinePlayer = playerToRemove.getPlayer();
                 if (onlinePlayer != null) {
                     Main.updateScoreboard(onlinePlayer);
-                    OverheadScoreboard.updateOverhead(onlinePlayer);
+//                    OverheadScoreboard.updateOverhead(onlinePlayer);
+                    OverheadScoreboard.removePlayerFromClan(onlinePlayer, ownerClan);
                     onlinePlayer.sendMessage("You have been removed from the clan " + ownerClan + ".");
                 }
             }
@@ -128,7 +129,8 @@ public class ClanRemove {
                 Player onlinePlayer = playerToRemove.getPlayer();
                 if (onlinePlayer != null) {
                     Main.updateScoreboard(onlinePlayer);
-                    OverheadScoreboard.updateOverhead(onlinePlayer);
+//                    OverheadScoreboard.updateOverhead(onlinePlayer);
+                    OverheadScoreboard.removePlayerFromClan(onlinePlayer, ownerClan);
                     onlinePlayer.sendMessage("You have been removed from the clan " + ownerClan + ".");
                 }
             }
@@ -169,7 +171,8 @@ public class ClanRemove {
                 Player onlinePlayer = playerToRemove.getPlayer();
                 if (onlinePlayer != null) {
                     Main.updateScoreboard(onlinePlayer);
-                    OverheadScoreboard.updateOverhead(onlinePlayer);
+//                    OverheadScoreboard.updateOverhead(onlinePlayer);
+                    OverheadScoreboard.removePlayerFromClan(onlinePlayer, ownerClan);
                     onlinePlayer.sendMessage("You have been removed from the clan " + ownerClan + ".");
                 }
             }

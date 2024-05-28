@@ -6,8 +6,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -210,26 +213,26 @@ public class OpenWorldMain implements Listener {
 
         if (e.getDamager() instanceof Player) {
 
-            if (e.getEntity() instanceof LivingEntity && !(e.getEntity() instanceof Player)) {
-
-                // Get the damage as a double
-                double dblDamage = e.getDamage()/2;
-
-                // Convert the damage to an integer
-                int Damage = (int) dblDamage;
-
-                Player attacker = ((Player) e.getDamager()).getPlayer();
-
-                ConfigurationSection attackerData = database.get().getConfigurationSection(attacker.getUniqueId().toString());
-
-                Integer attackerCoins = (Integer) attackerData.get("Coins");
-
-                attackerData.set("Coins",  attackerCoins + Damage);
-
-                database.save();
-                Main.updateScoreboard(attacker);
-
-            }
+//            if (e.getEntity() instanceof LivingEntity && !(e.getEntity() instanceof Player)) {
+//
+//                // Get the damage as a double
+//                double dblDamage = e.getDamage()/2;
+//
+//                // Convert the damage to an integer
+//                int Damage = (int) dblDamage;
+//
+//                Player attacker = ((Player) e.getDamager()).getPlayer();
+//
+//                ConfigurationSection attackerData = database.get().getConfigurationSection(attacker.getUniqueId().toString());
+//
+//                Integer attackerCoins = (Integer) attackerData.get("Coins");
+//
+//                attackerData.set("Coins",  attackerCoins + Damage);
+//
+//                database.save();
+//                Main.updateScoreboard(attacker);
+//
+//            }
 
             if (e.getEntity() instanceof Player) {
 
@@ -248,6 +251,33 @@ public class OpenWorldMain implements Listener {
 //            toolMeta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_UNBREAKABLE});
 //            playerItem.setItemMeta(toolMeta);
 //        }
+    }
+
+    @EventHandler
+    private void onMobKill(EntityDeathEvent e) {
+
+        LivingEntity entity = e.getEntity();
+        EntityType type = entity.getType();
+
+        if (isHostile(type) && entity.getKiller() instanceof  Player) {
+
+            Player killer = entity.getKiller();
+
+            int maxHealth = getEntityMaxHealth(entity);
+
+            int reward = maxHealth/10;
+
+            ConfigurationSection killerData = database.get().getConfigurationSection(killer.getUniqueId().toString());
+
+            Integer killerCoins = (Integer) killerData.get("Coins");
+
+            killerData.set("Coins",  killerCoins + reward);
+
+            database.save();
+            Main.updateScoreboard(killer);
+
+        }
+
     }
 
     @EventHandler
@@ -309,4 +339,55 @@ public class OpenWorldMain implements Listener {
         }
 
     }
+
+    public static int getEntityMaxHealth(Entity entity) {
+        if (entity instanceof LivingEntity) {
+            LivingEntity livingEntity = (LivingEntity) entity;
+            return (int) livingEntity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
+        }
+        return 0; // Return 0 for non-living entities or handle as needed
+    }
+
+    private boolean isHostile(EntityType type) {
+        // List of hostile mobs in Minecraft 1.17.1
+        switch (type) {
+            case ZOMBIE:
+            case SKELETON:
+            case CREEPER:
+            case SPIDER:
+            case CAVE_SPIDER:
+            case ENDERMAN:
+            case WITCH:
+            case WITHER:
+            case ENDER_DRAGON:
+            case SLIME:
+            case SILVERFISH:
+            case PHANTOM:
+            case PILLAGER:
+            case VINDICATOR:
+            case EVOKER:
+//            case ILLUSIONER: // Unused but still part of the game
+            case GUARDIAN:
+            case ELDER_GUARDIAN:
+            case HOGLIN:
+            case PIGLIN:
+            case PIGLIN_BRUTE:
+            case DROWNED:
+            case HUSK:
+            case STRAY:
+            case ZOMBIFIED_PIGLIN:
+            case BLAZE:
+            case GHAST:
+            case MAGMA_CUBE:
+            case SHULKER:
+            case VEX:
+//            case DOLPHIN: // Aggressive when attacked
+            case RAVAGER:
+//            case STRIDER: // Only hostile when ridden by Zombified Piglin
+                return true;
+            default:
+                return false;
+        }
+    }
+
 }
