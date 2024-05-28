@@ -74,6 +74,7 @@ public class ClanDemote {
                 Player onlinePlayer = member.getPlayer();
                 if (onlinePlayer != null) {
                     onlinePlayer.sendMessage("You have been demoted in " + ownerClan + ".");
+                    Main.updateScoreboard(onlinePlayer);
                 }
             }
 

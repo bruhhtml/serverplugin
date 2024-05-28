@@ -2,6 +2,7 @@ package me.plugin.ClanningSystem.SubProcesses;
 
 import com.sun.org.apache.bcel.internal.generic.FADD;
 import me.plugin.ClanningSystem.ClanningDatabase;
+import me.plugin.Main;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
@@ -81,6 +82,9 @@ public class ClanPromote {
         clanData.set("Members", memberList);
 
         ClanningDatabase.save();
+
+        Main.updateScoreboard(owner);
+        Main.updateScoreboard(member);
 
         owner.sendMessage(member.getName() + " has been promoted to admin.");
         member.sendMessage("You have been promoted to admin in " + ownerClan);

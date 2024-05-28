@@ -1,8 +1,11 @@
 package me.plugin.ClanningSystem.SubProcesses;
 
 import me.plugin.ClanningSystem.ClanningDatabase;
+import me.plugin.Main;
 import me.plugin.OpenWorld.OverheadScoreboard;
 import me.plugin.database;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
@@ -72,6 +75,17 @@ public class ClanLeave {
                     //UPDATED IN GAME VISUALS
 //                    OverheadScoreboard.updateOverhead(player);
                     OverheadScoreboard.removePlayerFromClan(player, currentClan);
+                    Main.updateScoreboard(player);
+
+                    if (Bukkit.getOfflinePlayer(clanData.get("Owner").toString()).isOnline()) {
+                        Player onlinePlayer = Bukkit.getOfflinePlayer(clanData.get("Owner").toString()).getPlayer();
+                        if (onlinePlayer != null) {
+                            Main.updateScoreboard(onlinePlayer);
+//                    OverheadScoreboard.updateOverhead(onlinePlayer);
+                            onlinePlayer.sendMessage("You have been promoted to " + ChatColor.LIGHT_PURPLE + "OWNER" + " of " + currentClan + ".");
+                        }
+                    }
+
                     return true;
                 }
                 if (memberList.size() > 0) {
@@ -83,7 +97,7 @@ public class ClanLeave {
                     //REMOVE MEMBER 1 FROM MEMBERS
                     memberList.remove(0);
                     //SET MEMBERS TO NEW MEMBER LIST
-                    clanData.set("Admins", memberList);
+                    clanData.set("Members", memberList);
 
                     //CLEAR PLAYER CURRENT CLAN
                     playerData.set("CurrentClan", null);
@@ -98,6 +112,17 @@ public class ClanLeave {
                     //UPDATED IN GAME VISUALS
 //                    OverheadScoreboard.removePlayerFromClan(player, currentClan);
                     OverheadScoreboard.removePlayerFromClan(player, currentClan);
+                    Main.updateScoreboard(player);
+
+                    if (Bukkit.getOfflinePlayer(clanData.get("Owner").toString()).isOnline()) {
+                        Player onlinePlayer = Bukkit.getOfflinePlayer(clanData.get("Owner").toString()).getPlayer();
+                        if (onlinePlayer != null) {
+                            Main.updateScoreboard(onlinePlayer);
+//                    OverheadScoreboard.updateOverhead(onlinePlayer);
+                            onlinePlayer.sendMessage("You have been promoted to " + ChatColor.LIGHT_PURPLE + "OWNER" + " of " + currentClan + ".");
+                        }
+                    }
+
                     return true;
                 }
                 // ## ELSE ## COMPLETELY DELETE CLAN
@@ -114,6 +139,7 @@ public class ClanLeave {
                 //UPDATED IN GAME VISUALS
 //                OverheadScoreboard.updateOverhead(player);
                 OverheadScoreboard.removePlayerFromClan(player, currentClan);
+                Main.updateScoreboard(player);
                 break;
             case "Admin":
                 // REMOVE ## ADMIN ## FROM LIST
