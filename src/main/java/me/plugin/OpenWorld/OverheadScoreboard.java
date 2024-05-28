@@ -34,7 +34,7 @@ public class OverheadScoreboard {
             if (clanTeam == null) {
                 clanTeam = scoreboard.registerNewTeam(clanName);
                 clanTeam.setDisplayName(clanName);
-                clanTeam.setPrefix(ChatColor.GREEN + "[" + clanName + "] " + ChatColor.RESET);
+                clanTeam.setPrefix(ChatColor.GREEN + " [" + ChatColor.RESET + clanName + ChatColor.GREEN + "] " + ChatColor.RESET);
                 clanTeam.setCanSeeFriendlyInvisibles(true); // Optional: set team options
                 clanTeam.setAllowFriendlyFire(false); // Optional: set team options
             }
@@ -45,7 +45,7 @@ public class OverheadScoreboard {
             }
 
             // Store the overhead display name
-            String overheadDisplayName = ChatColor.GREEN + "[" + clanName + "] " + ChatColor.RESET + player.getName();
+            String overheadDisplayName = ChatColor.GREEN + " [" + ChatColor.RESET + clanName + ChatColor.GREEN + "] " + ChatColor.RESET + player.getName();
             overheadDisplayNames.put(player, overheadDisplayName);
 
             // Update the player's display name and list name
