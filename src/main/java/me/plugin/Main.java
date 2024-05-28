@@ -13,23 +13,27 @@ import me.plugin.OpenWorld.NPCs.CashScoreboard.CashLeaderboardCommand;
 import me.plugin.OpenWorld.NPCs.CashScoreboard.UpdateCashScoreboardTask;
 import me.plugin.OpenWorld.NPCs.ClanScoreboard.ClanLeaderboardCommand;
 import me.plugin.OpenWorld.NPCs.ClanScoreboard.UpdateClanScoreboardTask;
-import me.plugin.OpenWorld.NPCs.Merchant.MerchantController;
+import me.plugin.OpenWorld.NPCs.NPCEventContoller;
 import me.plugin.OpenWorld.NPCs.Merchant.ShopSystemClicks;
 import me.plugin.OpenWorld.NPCs.Merchant.ShopSystemCommands;
+import me.plugin.OpenWorld.NPCs.Wizard.WizardUI;
 import me.plugin.OpenWorld.OpenWorldMain;
 import me.plugin.OpenWorld.OverheadScoreboard;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scoreboard.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 //We need to import the CommandHandler class
 
@@ -46,7 +50,7 @@ public class Main extends JavaPlugin implements Listener {
         this.getServer().getPluginManager().registerEvents(new DepositSystem(), this);
         this.getServer().getPluginManager().registerEvents(new OpenWorldMain(), this);
         this.getServer().getPluginManager().registerEvents(new ShopSystemClicks(), this);
-        this.getServer().getPluginManager().registerEvents(new MerchantController(), this);
+        this.getServer().getPluginManager().registerEvents(new NPCEventContoller(), this);
         this.getCommand("BankGui").setExecutor(new BankSystemCommands());
         this.getCommand("EnableBanking").setExecutor(new BankSystemCommands());
         this.getCommand("SetCash").setExecutor(new BankSystemCommands());
@@ -71,6 +75,16 @@ public class Main extends JavaPlugin implements Listener {
         new DailyInterestTask().runTaskTimer(this, interestTiming, interestTiming);
         new UpdateCashScoreboardTask().runTaskTimer(this, leaderboardTiming, leaderboardTiming);
         new UpdateClanScoreboardTask().runTaskTimer(this, leaderboardTiming, leaderboardTiming);
+
+        // Initialize enchantment costs map
+        Map<Enchantment, Integer> enchantmentCosts = new HashMap<>();
+        enchantmentCosts.put(Enchantment.PROTECTION_ENVIRONMENTAL, 100);
+        enchantmentCosts.put(Enchantment.DURABILITY, 150);
+        enchantmentCosts.put(Enchantment.ARROW_INFINITE, 200);
+
+        // Register the WizardUI class as an event listener and pass the enchantment costs map
+        getServer().getPluginManager().registerEvents(new WizardUI(enchantmentCosts), this);
+
     }
 
     public static void updateScoreboard(Player plr) {
