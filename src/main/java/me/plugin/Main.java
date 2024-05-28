@@ -2,6 +2,7 @@ package me.plugin;
 
 import me.plugin.ClanningSystem.ClanningCommands;
 import me.plugin.ClanningSystem.ClanningDatabase;
+import me.plugin.ClanningSystem.SubProcesses.ClanCreate;
 import me.plugin.FriendSystem.FriendSystemMain;
 import me.plugin.MainLobby.LobbyCommands;
 import me.plugin.MainLobby.NPCs.Banker.BankSystemClicks;
@@ -99,13 +100,39 @@ public class Main extends JavaPlugin implements Listener {
             objective.setDisplaySlot(DisplaySlot.SIDEBAR);
             objective.setDisplayName(ChatColor.GREEN + "Open World");
             Score score = objective.getScore(" ");
-            score.setScore(4);
-            Score score5 = objective.getScore("Coins: " + String.format("%,d", database.get().getConfigurationSection(plr.getUniqueId().toString()).getInt("Coins")));
-            score5.setScore(3);
+
+            Score score5 = objective.getScore("Wallet: " + ChatColor.YELLOW + String.format("%,d", database.get().getConfigurationSection(plr.getUniqueId().toString()).getInt("Coins")));
+
             Score score6 = objective.getScore("   ");
-            score6.setScore(2);
-            Score score8 = objective.getScore("    ");
-            score8.setScore(1);
+
+            if (ClanCreate.isInAnyClan(plr.getUniqueId().toString())) {
+                score.setScore(7);
+                score5.setScore(6);
+                score6.setScore(5);
+
+                String plrsClan = ClanCreate.getPlayerClan(plr.getUniqueId().toString());
+                String plrsRank = ClanCreate.getRankInClan(plr.getUniqueId().toString(), plrsClan);
+                int plrsClanBank = ClanningDatabase.get().getConfigurationSection(plrsClan).getInt("Bank");
+
+                Score score7 = objective.getScore(ChatColor.GREEN + "Clan: " + ChatColor.RESET + plrsClan);
+                score7.setScore(4);
+
+                Score score8 = objective.getScore(ChatColor.GREEN + "Clan Rank: " + ChatColor.RESET + plrsRank);
+                score8.setScore(3);
+
+                Score score9 = objective.getScore(ChatColor.GREEN + "Clan Bank: " + ChatColor.RESET + plrsClanBank);
+                score9.setScore(2);
+            } else {
+
+                score.setScore(4);
+                score5.setScore(3);
+                score6.setScore(2);
+
+            }
+
+            Score score10 = objective.getScore("    ");
+            score10.setScore(1);
+
             plr.setScoreboard(scoreboard);
         }
     }
