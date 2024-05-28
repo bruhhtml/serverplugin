@@ -1,12 +1,9 @@
 package me.plugin.ClanningSystem;
 
-import me.plugin.ClanningSystem.SubProcesses.ClanAdd;
-import me.plugin.ClanningSystem.SubProcesses.ClanLeave;
-import me.plugin.ClanningSystem.SubProcesses.ClanRemove;
+import me.plugin.ClanningSystem.SubProcesses.*;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.plugin.Plugin;
-import me.plugin.ClanningSystem.SubProcesses.ClanCreate;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -25,7 +22,7 @@ import static me.plugin.Main.updateScoreboard;
 
 public class ClanningCommands implements CommandExecutor, TabCompleter {
 
-    private final List<String> subCommands = Arrays.asList("create", "add", "remove", "leave");
+    private final List<String> subCommands = Arrays.asList("create", "add", "remove", "promote", "demote", "leave");
 
     public ClanningCommands(JavaPlugin plugin) {
         plugin.getCommand("clan").setExecutor(this);
@@ -76,6 +73,22 @@ public class ClanningCommands implements CommandExecutor, TabCompleter {
                 // Handle remove player from clan logic here
 //                player.sendMessage("Player removed from clan!");
                 break;
+            case "promote":
+                Player member = Bukkit.getPlayer(args[1]);
+                if (member.isOnline()) {
+                    if (!ClanPromote.promoteClanPlayer(player, member)) {
+
+                        player.sendMessage(ChatColor.RED + "[SERVER] " + ChatColor.RESET + "Use " + ChatColor.BLUE + "/clan help" + ChatColor.RESET + " for assistance");
+
+                    }
+                }
+                break;
+            case "demote":
+                if (!ClanDemote.demoteClanMember(player, Bukkit.getOfflinePlayer(args[1]))) {
+
+                    player.sendMessage(ChatColor.RED + "[SERVER] " + ChatColor.RESET + "Use " + ChatColor.BLUE + "/clan help" + ChatColor.RESET + " for assistance");
+
+                }
             case "leave":
                 // Handle leave clan logic here
 
