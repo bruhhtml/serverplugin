@@ -38,5 +38,6 @@
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.17.1" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: net.citizensnpcs:citizens-main:2.0.34-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.jetbrains:annotations:24.1.0" level="project" />
+    <orderEntry type="library" name="HolographicDisplays-3.0.5-SNAPSHOT" level="project" />
   </component>
 </module>

@@ -1,5 +1,7 @@
 package me.plugin;
 
+import me.filoghost.holographicdisplays.api.hologram.Hologram;
+import me.filoghost.holographicdisplays.plugin.HolographicDisplays;
 import me.plugin.ClanningSystem.ClanningCommands;
 import me.plugin.ClanningSystem.ClanningDatabase;
 import me.plugin.ClanningSystem.SubProcesses.ClanCreate;
@@ -15,12 +17,13 @@ import me.plugin.OpenWorld.NPCs.ClanScoreboard.ClanLeaderboardCommand;
 import me.plugin.OpenWorld.NPCs.ClanScoreboard.UpdateClanScoreboardTask;
 import me.plugin.OpenWorld.NPCs.NPCEventContoller;
 import me.plugin.OpenWorld.NPCs.Merchant.ShopSystemClicks;
-import me.plugin.OpenWorld.NPCs.Merchant.ShopSystemCommands;
+//import me.plugin.OpenWorld.NPCs.Merchant.ShopSystemCommands;
 import me.plugin.OpenWorld.NPCs.Wizard.WizardUI;
 import me.plugin.OpenWorld.OpenWorldMain;
 import me.plugin.OpenWorld.OverheadScoreboard;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -56,7 +59,7 @@ public class Main extends JavaPlugin implements Listener {
         this.getCommand("SetCash").setExecutor(new BankSystemCommands());
         this.getCommand("Lobby").setExecutor(new LobbyCommands());
         this.getCommand("OverWorld").setExecutor(new LobbyCommands());
-        this.getCommand("OpenWorldShopGUI").setExecutor(new ShopSystemCommands());
+//        this.getCommand("OpenWorldShopGUI").setExecutor(new ShopSystemCommands());
         this.getCommand("Friend").setExecutor(new FriendSystemMain());
         this.getCommand("FriendAccept").setExecutor(new FriendSystemMain());
         this.getCommand("UpdateCashLeaderboard").setExecutor(new CashLeaderboardCommand());
@@ -71,10 +74,13 @@ public class Main extends JavaPlugin implements Listener {
         // Schedule the task to run once per day
 //        int ticksPerDay = 20 * 60 * 60 * 24; // 20 ticks per second, 60 seconds per minute, 60 minutes per hour, 24 hours per day
         int interestTiming = 20 * 60 * 60 * 2; // 20 ticks per second, 60 seconds per minute, 60 minutes per hour, 2 hours
-        int leaderboardTiming = 20 * 60 * 5; // 20 ticks per second, 60 seconds per minute, 10 minutes
+        int leaderboardTiming = 20 * 10; //* 5; // 20 ticks per second, 60 seconds per minute, 10 minutes
         new DailyInterestTask().runTaskTimer(this, interestTiming, interestTiming);
         new UpdateCashScoreboardTask().runTaskTimer(this, leaderboardTiming, leaderboardTiming);
-        new UpdateClanScoreboardTask().runTaskTimer(this, leaderboardTiming, leaderboardTiming);
+
+//        Hologram hologram = (Hologram) HolographicDisplays.getInstance().getInternalHologramManager().getHologramByName("ClanLeaderboard");
+
+//        new UpdateClanScoreboardTask(hologram).runTaskTimer(this, leaderboardTiming, leaderboardTiming);
 
         // Initialize enchantment costs map
         Map<Enchantment, Integer> enchantmentCosts = new HashMap<>();

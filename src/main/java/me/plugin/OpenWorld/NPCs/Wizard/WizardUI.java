@@ -10,17 +10,16 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
 public class WizardUI implements Listener {
 
     private static Map<Enchantment, Integer> enchantmentCosts = null;
-
     private static final int enchantmentRemovalCost = 50; // Example cost for removing any enchantment
 
     public WizardUI(Map<Enchantment, Integer> enchantmentCosts) {
@@ -31,12 +30,24 @@ public class WizardUI implements Listener {
         // Create wizard GUI
         Inventory gui = Bukkit.createInventory(null, 9, "Wizard's Enchantments");
 
-        // Populate GUI with enchantments and costs
-        for (Map.Entry<Enchantment, Integer> entry : enchantmentCosts.entrySet()) {
-            ItemStack item = new ItemStack(Material.ENCHANTED_BOOK);
-            item.addUnsafeEnchantment(entry.getKey(), 1);
-            item.getItemMeta().setDisplayName(String.valueOf(entry.getKey().getKey()));
-            gui.addItem(item);
+        // Add a placeholder book in the last slot
+        ItemStack book = new ItemStack(Material.ENCHANTED_BOOK);
+        ItemMeta meta = book.getItemMeta();
+        meta.setDisplayName("Enchant/Disenchant");
+        book.setItemMeta(meta);
+        gui.setItem(8, book);
+
+        // Fill gaps with gray stained glass panes
+        ItemStack gapFill = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
+        ItemMeta gapMeta = gapFill.getItemMeta();
+        gapMeta.setDisplayName(" ");
+        gapMeta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ENCHANTS});
+        gapFill.setItemMeta(gapMeta);
+
+        for (int i = 0; i < gui.getSize(); i++) {
+            if (i != 0 && i != 8) {
+                gui.setItem(i, gapFill);
+            }
         }
 
         // Open GUI for the player
@@ -50,41 +61,47 @@ public class WizardUI implements Listener {
 
         if (event.getView().getTitle().equals("Wizard's Enchantments")) {
             event.setCancelled(true);
+            int slot = event.getRawSlot();
+            Inventory inventory = event.getInventory();
             ItemStack clickedItem = event.getCurrentItem();
 
-            if (clickedItem != null && clickedItem.getType() != Material.AIR) {
-                // Get the item selected by the player
-                ItemStack selected = player.getItemInHand();
-
-                if (selected != null && selected.getType() != Material.AIR) {
-                    Enchantment enchantment = getRandomEnchantment();
-                    int addCost = enchantmentCosts.getOrDefault(enchantment, 0);
-                    int removeCost = calculateRemoveEnchantCost(selected);
-
-                    // Total cost including both adding and removing enchantments
-                    int totalCost = addCost + removeCost;
-
-                    if (hasEnoughCoins(player, totalCost)) {
-                        // Deduct coins for both removing and adding enchantments
-                        deductCoins(player, totalCost);
-
-                        // Remove existing enchantments
-                        removeEnchantments(selected);
-
-                        // Apply new enchantment
-                        selected.addUnsafeEnchantment(enchantment, 1);
-                        player.sendMessage("Item enchanted successfully with " + enchantment.getKey().getKey() + " for " + totalCost + " coins!");
-                    } else {
-                        player.sendMessage("You don't have enough coins to purchase these enchantments!");
-                    }
-
-                    // Close the GUI
-                    player.closeInventory();
+            if (slot == 0) {
+                // Allow player to place or remove item in the first slot
+                event.setCancelled(false);
+            } else if (slot == 8 && clickedItem != null && clickedItem.getType() == Material.ENCHANTED_BOOK) {
+                // Handle enchanting/disenchanting when the book is clicked
+                ItemStack itemToEnchant = inventory.getItem(0);
+                if (itemToEnchant != null && itemToEnchant.getType() != Material.AIR) {
+                    handleEnchantingDisenchanting(player, itemToEnchant);
                 } else {
-                    player.sendMessage("Please select an item to enchant!");
+                    player.sendMessage("Please place an item in the first slot to enchant or disenchant!");
                 }
             }
         }
+    }
+
+    private void handleEnchantingDisenchanting(Player player, ItemStack item) {
+        int removeCost = calculateRemoveEnchantCost(item);
+        Enchantment randomEnchantment = getRandomEnchantment();
+        int addCost = enchantmentCosts.getOrDefault(randomEnchantment, 0);
+        int totalCost = removeCost + addCost;
+
+        if (hasEnoughCoins(player, totalCost)) {
+            // Deduct coins for both removing and adding enchantments
+            deductCoins(player, totalCost);
+
+            // Remove existing enchantments
+            removeEnchantments(item);
+
+            // Apply new enchantment
+            item.addUnsafeEnchantment(randomEnchantment, 1);
+            player.sendMessage("Item enchanted successfully with " + randomEnchantment.getKey().getKey() + " for " + totalCost + " coins!");
+        } else {
+            player.sendMessage("You don't have enough coins to purchase these enchantments!");
+        }
+
+        // Close the GUI
+        player.closeInventory();
     }
 
     private boolean hasEnoughCoins(Player player, int cost) {
@@ -100,20 +117,10 @@ public class WizardUI implements Listener {
         database.save();
     }
 
-    private Enchantment getEnchantmentFromDisplayName(String displayName) {
-        for (Enchantment enchantment : enchantmentCosts.keySet()) {
-            if (enchantment.getKey().getKey().equals(displayName)) {
-                return enchantment;
-            }
-        }
-        return null;
-    }
-
     private int calculateRemoveEnchantCost(ItemStack item) {
         int cost = 0;
         if (item != null && item.hasItemMeta()) {
             for (Map.Entry<Enchantment, Integer> entry : item.getEnchantments().entrySet()) {
-                // Assuming all enchantment removals cost the same
                 cost += enchantmentRemovalCost;
             }
         }
@@ -133,4 +140,12 @@ public class WizardUI implements Listener {
         return enchantments[new Random().nextInt(enchantments.length)];
     }
 
+    private Enchantment getEnchantmentFromDisplayName(String displayName) {
+        for (Enchantment enchantment : enchantmentCosts.keySet()) {
+            if (enchantment.getKey().getKey().equals(displayName)) {
+                return enchantment;
+            }
+        }
+        return null;
+    }
 }

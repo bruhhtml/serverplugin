@@ -1,12 +1,8 @@
 package me.plugin.OpenWorld.NPCs.ClanScoreboard;
 
+import me.filoghost.holographicdisplays.api.hologram.Hologram;
 import me.plugin.ClanningSystem.ClanningDatabase;
-import me.plugin.database;
-import net.citizensnpcs.api.CitizensAPI;
-import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.trait.HologramTrait;
 import org.bukkit.ChatColor;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.text.NumberFormat;
@@ -17,68 +13,62 @@ import java.util.List;
 
 public class UpdateClanScoreboardTask extends BukkitRunnable {
 
+    private final Hologram hologram;
+
+    public UpdateClanScoreboardTask(Hologram hologram) {
+        this.hologram = (Hologram) hologram;
+    }
+
     @Override
     public void run() {
-        // Fetch player data
-        FileConfiguration databaseFile = ClanningDatabase.get();
-        List<ClanLeaderboardCommand.ClanData> clans = new ArrayList<>();
-
-        for (String clan : databaseFile.getKeys(false)) {
-            int coins = databaseFile.getInt(clan + ".Bank", 0);
+        // Fetch clan data
+        List<ClanData> clans = new ArrayList<>();
+        for (String clan : ClanningDatabase.get().getKeys(false)) {
+            int coins = ClanningDatabase.get().getInt(clan + ".Bank", 0);
             String clanName = clan;
-
             if (clanName == null) {
                 clanName = "Unknown";
             }
-
-            clans.add(new ClanLeaderboardCommand.ClanData(clanName, coins));
+            clans.add(new ClanData(clanName, coins));
         }
 
-        // Sort players by total coins
-        Collections.sort(clans, Comparator.comparingInt(ClanLeaderboardCommand.ClanData::getTotalClanCoins).reversed());
+        // Sort clans by total coins
+        Collections.sort(clans, Comparator.comparingInt(ClanData::getTotalClanCoins).reversed());
 
-        // Get top 10 players
-        List<ClanLeaderboardCommand.ClanData> top10Clans = clans.subList(0, Math.min(10, clans.size()));
+        // Get top 10 clans
+        List<ClanData> top10Clans = clans.subList(0, Math.min(10, clans.size()));
 
-        // Update NPC Hologram
+        // Update Holographic Displays hologram
         updateHologram(top10Clans);
     }
-    private void updateHologram(List<ClanLeaderboardCommand.ClanData> top10Clans) {
-        NPC npc = CitizensAPI.getNPCRegistry().getById(15); // Ensure this is the correct NPC ID
 
-        if (npc != null) {
-            HologramTrait hologram = npc.getOrAddTrait(HologramTrait.class);
-            hologram.clear();
+    private void updateHologram(List<ClanData> top10Clans) {
+        // Clear existing lines
+        hologram.getLines().clear();
 
-            // Assuming getTotalCoins() returns a numerical value
-            // Get the NumberFormat instance for formatting
-            NumberFormat numberFormat = NumberFormat.getInstance();
+        // Format the total coins
+        NumberFormat numberFormat = NumberFormat.getInstance();
+        numberFormat.setGroupingUsed(true);
 
-            // Set the formatting style to use commas for every thousand
-            numberFormat.setGroupingUsed(true);
-
-            if (top10Clans.size() < 10) {
-
-                int fillSize = 10 - top10Clans.size();
-
-                for (int i = 0; i < fillSize; i++) {
-
-                    hologram.addLine("");
-
-                }
-
+        // Add empty lines if less than 10 clans
+        if (top10Clans.size() < 10) {
+            int fillSize = 10 - top10Clans.size();
+            for (int i = 0; i < fillSize; i++) {
+                hologram.getLines().insertText(0, "");
             }
-
-            for (int i = top10Clans.size() - 1; i >= 0; i--) {
-                ClanLeaderboardCommand.ClanData clanData = top10Clans.get(i); // Get the player data in reverse order
-                // Format the total coins
-                String formattedCoins = numberFormat.format(clanData.getTotalClanCoins());
-                hologram.addLine(ChatColor.YELLOW + String.valueOf(i + 1) + ". " + ChatColor.RESET + clanData.getClanName() + " - " + ChatColor.YELLOW + formattedCoins + " coins");
-            }
-
-            hologram.addLine(ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "" + ChatColor.UNDERLINE + "Top 10 Clans:"); // Add the title first
         }
+
+        // Add top 10 clans in reverse order
+        for (int i = top10Clans.size() - 1; i >= 0; i--) {
+            ClanData clanData = top10Clans.get(i);
+            String formattedCoins = numberFormat.format(clanData.getTotalClanCoins());
+            hologram.getLines().insertText(0, ChatColor.YELLOW + String.valueOf(i + 1) + ". " + ChatColor.RESET + clanData.getClanName() + " - " + ChatColor.YELLOW + formattedCoins + " coins");
+        }
+
+        // Add title at the end
+        hologram.getLines().insertText(0, ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "" + ChatColor.UNDERLINE + "Top 10 Clans:");
     }
+
 
     public static class ClanData {
         private final String clanName;

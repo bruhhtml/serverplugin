@@ -89,6 +89,7 @@ public class ClanningCommands implements CommandExecutor, TabCompleter {
                     player.sendMessage(ChatColor.RED + "[SERVER] " + ChatColor.RESET + "Use " + ChatColor.BLUE + "/clan help" + ChatColor.RESET + " for assistance");
 
                 }
+                break;
             case "leave":
                 // Handle leave clan logic here
 
