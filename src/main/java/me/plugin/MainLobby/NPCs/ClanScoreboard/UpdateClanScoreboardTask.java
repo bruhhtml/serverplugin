@@ -1,4 +1,4 @@
-package me.plugin.OpenWorld.NPCs.ClanScoreboard;
+package me.plugin.MainLobby.NPCs.ClanScoreboard;
 
 import me.filoghost.holographicdisplays.api.hologram.Hologram;
 import me.plugin.ClanningSystem.ClanningDatabase;
@@ -13,10 +13,10 @@ import java.util.List;
 
 public class UpdateClanScoreboardTask extends BukkitRunnable {
 
-    private final Hologram hologram;
+    private final Hologram clanLeaderboard;
 
     public UpdateClanScoreboardTask(Hologram hologram) {
-        this.hologram = (Hologram) hologram;
+        this.clanLeaderboard = hologram;
     }
 
     @Override
@@ -44,7 +44,7 @@ public class UpdateClanScoreboardTask extends BukkitRunnable {
 
     private void updateHologram(List<ClanData> top10Clans) {
         // Clear existing lines
-        hologram.getLines().clear();
+        clanLeaderboard.getLines().clear();
 
         // Format the total coins
         NumberFormat numberFormat = NumberFormat.getInstance();
@@ -54,7 +54,7 @@ public class UpdateClanScoreboardTask extends BukkitRunnable {
         if (top10Clans.size() < 10) {
             int fillSize = 10 - top10Clans.size();
             for (int i = 0; i < fillSize; i++) {
-                hologram.getLines().insertText(0, "");
+                clanLeaderboard.getLines().insertText(0, "");
             }
         }
 
@@ -62,11 +62,11 @@ public class UpdateClanScoreboardTask extends BukkitRunnable {
         for (int i = top10Clans.size() - 1; i >= 0; i--) {
             ClanData clanData = top10Clans.get(i);
             String formattedCoins = numberFormat.format(clanData.getTotalClanCoins());
-            hologram.getLines().insertText(0, ChatColor.YELLOW + String.valueOf(i + 1) + ". " + ChatColor.RESET + clanData.getClanName() + " - " + ChatColor.YELLOW + formattedCoins + " coins");
+            clanLeaderboard.getLines().insertText(0, ChatColor.YELLOW + String.valueOf(i + 1) + ". " + ChatColor.RESET + clanData.getClanName() + " - " + ChatColor.YELLOW + formattedCoins + " coins");
         }
 
         // Add title at the end
-        hologram.getLines().insertText(0, ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "" + ChatColor.UNDERLINE + "Top 10 Clans:");
+        clanLeaderboard.getLines().insertText(0, "{Rainbow}Top Clans");
     }
 
 

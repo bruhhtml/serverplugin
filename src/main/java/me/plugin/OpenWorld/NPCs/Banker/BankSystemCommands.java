@@ -1,7 +1,7 @@
-package me.plugin.MainLobby.NPCs.Banker;
+package me.plugin.OpenWorld.NPCs.Banker;
 
 import me.plugin.Main;
-import me.plugin.MainLobby.NPCs.Banker.GUIs.BankGUI;
+import me.plugin.OpenWorld.NPCs.Banker.GUIs.BankGUI;
 import me.plugin.database;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

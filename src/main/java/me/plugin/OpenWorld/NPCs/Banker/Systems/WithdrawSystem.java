@@ -1,4 +1,4 @@
-package me.plugin.MainLobby.NPCs.Banker.Systems;
+package me.plugin.OpenWorld.NPCs.Banker.Systems;
 
 import me.plugin.Main;
 import me.plugin.database;

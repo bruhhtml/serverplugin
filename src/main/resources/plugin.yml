@@ -1,8 +1,9 @@
 name: MainServerPlugin
 version: 1.0
 main: me.plugin.Main
-api-version: 1.17
-depend: [Citizens, HolographicDisplays]
+api-version: 1.20
+depend: [Citizens]
+softdepend: [HolographicDisplays]
 commands:
   BankGui:
     description: this shows the bank gui

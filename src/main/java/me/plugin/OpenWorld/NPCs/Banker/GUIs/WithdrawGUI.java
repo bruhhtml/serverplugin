@@ -1,4 +1,4 @@
-package me.plugin.MainLobby.NPCs.Banker.GUIs;
+package me.plugin.OpenWorld.NPCs.Banker.GUIs;
 
 import me.plugin.database;
 import org.bukkit.Bukkit;
